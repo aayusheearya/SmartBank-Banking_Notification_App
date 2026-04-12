@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8">
+	<title th:text="${title} ?: 'Login — SmartBank'">Login — SmartBank</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<style>
+		:root {
+			--bg-solid: #0b0d17;
+			--card-bg: #161b2c;
+			--accent: #10b981;
+			--accent-alt: #6366f1;
+			--text-bright: #ffffff;
+			--text-dim: #94a3b8;
+			--border: #2d3748;
+		}
+		body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--bg-solid); color: var(--text-bright); display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+		.card { background: var(--card-bg); padding: 40px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); width: 100%; max-width: 400px; text-align: center; }
+		.brand { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 30px; }
+		.logo { width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, var(--accent-alt), var(--accent)); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; color: #0b0d17; }
+		h2 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+		.msg-success { background: rgba(16, 185, 129, 0.1); color: var(--accent); padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; border: 1px solid var(--accent); }
+		.msg-error { background: rgba(239, 68, 68, 0.1); color: #fca5a5; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; border: 1px solid #ef4444; }
+		.form-group { text-align: left; margin-bottom: 15px; }
+		label { display: block; color: var(--text-dim); margin-bottom: 6px; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+		input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-solid); color: #fff; box-sizing: border-box; font-size: 14px; }
+		input:focus { border-color: var(--accent); outline: none; }
+		.btn { width: 100%; padding: 12px; border-radius: 8px; border: none; cursor: pointer; font-weight: 700; background: linear-gradient(135deg, var(--accent-alt), var(--accent)); color: #fff; font-size: 14px; transition: 0.2s; margin-top: 10px; }
+		.btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); }
+		.btn-home { display: block; margin-top: 15px; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text-dim); text-decoration: none; font-size: 13px; font-weight: 600; transition: 0.2s; text-align: center;}
+		.btn-home:hover { border-color: var(--accent); color: var(--accent); }
+		.footer-text { margin-top: 20px; font-size: 13px; color: var(--text-dim); }
+		.link { color: var(--accent); text-decoration: none; font-weight: 600; }
+	</style>
+</head>
+<body>
+<div class="card">
+	<div class="brand">
+		<div class="logo">SB</div>
+		<h2>Smart<span style="color:var(--accent)">Bank</span></h2>
+	</div>
+
+	<div th:if="${param.registered != null}" class="msg-success">Registration successful — please login.</div>
+	<div th:if="${param.logout != null}" class="msg-success" style="color: #6366f1; border-color: #6366f1;">You have been logged out.</div>
+	<div th:if="${param.error != null}" class="msg-error">Invalid username or password.</div>
+
+	<form th:action="@{/perform_login}" method="post">
+		<div class="form-group">
+			<label for="username">Username (Email)</label>
+			<input id="username" name="username" type="text" placeholder="you@example.com" required autofocus />
+		</div>
+		<div class="form-group">
+			<label for="password">Password</label>
+			<input id="password" name="password" type="password" placeholder="••••••••" required />
+		</div>
+		<button type="submit" class="btn">Login to Account</button>
+	</form>
+
+	<a th:href="@{/}" class="btn-home">← Back to home</a>
+
+	<div class="footer-text">
+		New here? <a th:href="@{/register}" class="link">Create account</a>
+	</div>
+</div>
+</body>
+</html>

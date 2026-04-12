@@ -1,0 +1,70 @@
+<!doctype html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+	<meta charset="utf-8">
+	<title th:text="${title}">Features</title>
+
+	<link rel="stylesheet" href="/css/style.css" />
+
+</head>
+
+<body>
+
+	<div class="container" style="padding:28px 20px;">
+
+		<a class="btn btn-ghost" th:href="@{/}">← Back</a>
+
+		<h1 style="margin-top:12px;">Features</h1>
+
+		<p class="lead">Feature descriptions for the SmartBank notifications platform.</p>
+
+
+		<div class="features-grid">
+
+			<div class="feat-card">
+
+				<h3>Welcome Messages</h3>
+
+				<p>Customizable email and SMS templates triggered at account creation.</p>
+
+			</div>
+
+
+			<div class="feat-card">
+
+				<h3>Low Balance Alerts</h3>
+
+				<p>Threshold-based alerts with optional repeat reminders.</p>
+
+			</div>
+
+
+			<div class="feat-card">
+
+				<h3>Loan Reminders</h3>
+
+				<p>Automated EMI notifications and overdue reminders to customers.</p>
+
+			</div>
+
+
+			<div class="feat-card">
+
+				<h3>Security Alerts</h3>
+
+				<p>Immediate notifications for suspicious activity to users.</p>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<script src="/js/main.js"></script>
+
+</body>
+
+</html>

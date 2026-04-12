@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>SmartBank Dashboard</title>
+	<style>
+		:root {
+			--bg-solid: #0b0d17;
+			--card-bg: #161b2c;
+			--accent: #10b981; /* Emerald */
+			--accent-alt: #6366f1; /* Violet */
+			--text-bright: #ffffff;
+			--text-dim: #94a3b8;
+			--border: #2d3748;
+		}
+		body {
+			margin: 0; font-family: 'Inter', sans-serif; background: var(--bg-solid);
+			color: var(--text-bright); line-height: 1.5; font-size: 14px;
+		}
+		.container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+
+		/* Success Toast Popup */
+		.success-toast {
+			position: fixed;
+			top: 25px;
+			left: 50%;
+			transform: translateX(-50%) translateY(-100px); /* Hidden above screen */
+			background: #10b981;
+			color: #0b0d17;
+			padding: 12px 24px;
+			border-radius: 50px;
+			font-weight: 700;
+			box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+			transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+			z-index: 1000;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+		.success-toast.show {
+			transform: translateX(-50%) translateY(0); /* Drops down into view */
+		}
+
+		/* Topbar Styling */
+		header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 30px; }
+		.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; }
+		.brand .logo {
+			width: 32px; height: 32px; border-radius: 8px;
+			background: linear-gradient(135deg, var(--accent-alt), var(--accent));
+			display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; color: #0b0d17;
+		}
+
+		/* Buttons */
+		.btn { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; border: none; }
+		.btn-primary { background: linear-gradient(135deg, var(--accent-alt), var(--accent)); color: #fff; }
+		.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+		.btn-ghost { background: transparent; color: var(--text-bright); border: 1px solid var(--border); }
+		.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+		/* Open Layout Sections (Boxes Removed) */
+		.card {
+			background: transparent; /* Box removed */
+			padding: 0;               /* Padding removed */
+			border: none;             /* Border removed */
+			margin-bottom: 40px;
+		}
+
+		.balance-value { font-size: 42px; font-weight: 800; margin: 10px 0; color: #fff; letter-spacing: -1.5px; }
+
+		h4, h3 { margin: 25px 0 15px 0; color: var(--accent); font-size: 12px; text-transform: uppercase; letter-spacing: 2px; font-weight: 800; }
+
+		.action-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 15px; }
+		input, select { background: var(--card-bg); border: 1px solid var(--border); color: #fff; padding: 12px; border-radius: 8px; outline: none; width: 100%; box-sizing: border-box; font-size: 14px; }
+		input:focus { border-color: var(--accent); }
+
+		/* Table Styling */
+		table.tx-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+		table.tx-table th { text-align: left; color: var(--accent); font-size: 11px; text-transform: uppercase; padding: 12px 0; border-bottom: 1px solid var(--border); }
+		table.tx-table td { padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 13px; }
+
+		/* OTP Overlay stays as a box for focus */
+		#otpOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 9999; backdrop-filter: blur(5px); }
+		.otp-card { background: var(--card-bg); padding: 30px; border-radius: 20px; border: 1px solid var(--accent); text-align: center; max-width: 350px; width: 90%; }
+	</style>
+</head>
+<body>
+
+<div id="toast" class="success-toast" th:classappend="${toastMessage != null} ? 'show' : ''">
+	<span>✓</span> <span th:text="${toastMessage}">Success!</span>
+</div>
+
+<div class="container">
+	<header>
+		<div class="brand">
+			<div class="logo">SB</div>
+			Smart<span style="color:var(--accent)">Bank</span>
+		</div>
+		<div class="nav-links" style="display:flex; gap:12px; align-items:center;">
+			<a th:href="@{/fixed-deposit/apply}" class="btn btn-ghost">Fixed Deposit</a>
+			<a th:href="@{/insurance/apply}" class="btn btn-ghost">Insurance</a>
+			<button id="btnRefresh" onclick="location.reload()" style="background:none; border:none; color:var(--text-dim); cursor:pointer; display:flex; align-items:center;">
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+			</button>
+			<form th:action="@{/logout}" method="post" style="display:inline">
+				<button type="submit" class="btn btn-primary">Logout</button>
+			</form>
+		</div>
+	</header>
+
+	<div class="card">
+		<div style="color:var(--text-dim); font-size:11px; text-transform:uppercase; letter-spacing:1px;">Available Balance</div>
+		<div class="balance-value">₹<span th:text="${#numbers.formatDecimal(balance, 1, 2)}">0.00</span></div>
+		<div style="font-size:13px; color:var(--text-dim);">Account Holder: <span th:text="${fullName}" style="color:var(--accent); font-weight:600;">User</span></div>
+
+		<h4>Transactions</h4>
+		<div class="action-row">
+			<input id="depositAmount" type="number" placeholder="Deposit Amount" required />
+			<input id="depositDesc" type="text" placeholder="Description" required />
+			<button id="btnDeposit" class="btn btn-primary">Deposit</button>
+		</div>
+		<div class="action-row">
+			<input id="withdrawAmount" type="number" placeholder="Withdraw Amount" required />
+			<input id="withdrawDesc" type="text" placeholder="Description" required />
+			<button id="btnWithdraw" class="btn btn-ghost">Withdraw</button>
+		</div>
+
+		<h4>Money Transfer</h4>
+		<div class="action-row">
+			<input id="transferEmail" type="email" placeholder="Recipient Email" required />
+			<input id="transferAmount" type="number" placeholder="Amount" required />
+			<input id="transferDesc" type="text" placeholder="Note" required />
+			<button id="btnTransfer" class="btn btn-primary">Transfer</button>
+		</div>
+		<div id="actionMessage" style="text-align: center; margin-top: 10px; font-weight: 700;"></div>
+	</div>
+
+	<div class="card">
+		<h3>Recent Activity</h3>
+		<table class="tx-table">
+			<thead><tr><th>Amount</th><th>Type</th><th>Description</th><th>Date</th></tr></thead>
+			<tbody>
+			<tr th:each="tx : ${recentTxLimited}">
+				<td th:style="${tx.amount < 0 ? 'color:#f87171' : 'color:var(--accent)'}" th:text="'₹' + ${tx.amount}"></td>
+				<td th:text="${tx.type}" style="font-weight:700; font-size:10px; text-transform:uppercase;"></td>
+				<td th:text="${tx.description}" style="color:var(--text-dim);"></td>
+				<td th:text="${#temporals.format(tx.createdAt,'dd MMM, HH:mm')}" style="color:var(--text-dim);"></td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="card">
+		<h3>Loan Application</h3>
+		<form th:action="@{/loans/apply}" method="post">
+			<div class="action-row">
+				<select name="type" required>
+					<option value="" disabled selected>Select Loan Product</option>
+					<option value="PERSONAL">Personal Loan</option>
+					<option value="HOME">Home Loan</option>
+					<option value="AUTO">Auto Loan</option>
+					<option value="EDUCATION">Education Loan</option>
+				</select>
+				<input name="principal" type="number" step="0.01" placeholder="Principal Amount ₹" required />
+				<input name="monthlyIncome" type="number" step="0.01" placeholder="Monthly Income ₹" required />
+			</div>
+			<div class="action-row">
+				<input name="tenureMonths" type="number" placeholder="Tenure (Months)" required />
+				<input name="description" type="text" placeholder="Loan Purpose / Description" required />
+				<button type="submit" class="btn btn-primary">Submit Application</button>
+			</div>
+		</form>
+	</div>
+</div>
+
+<div id="otpOverlay">
+	<div class="otp-card">
+		<h3 style="color:var(--accent); margin-top:0;">Verify Transfer</h3>
+		<p style="font-size:12px; color:var(--text-dim);">A code has been sent to your registered email.</p>
+		<input id="otpInput" type="text" maxlength="6" placeholder="000000" style="text-align:center; font-size:24px; letter-spacing:4px; margin:20px 0; background:var(--bg-solid); border:1px solid var(--border); color:white;" />
+		<div style="display:flex; gap:10px;">
+			<button id="btnConfirmOtp" class="btn btn-primary" style="flex:1;">Confirm</button>
+			<button onclick="document.getElementById('otpOverlay').style.display='none'" class="btn btn-ghost" style="flex:1;">Cancel</button>
+		</div>
+	</div>
+</div>
+
+<script th:src="@{/js/dashboard.js}"></script>
+
+<script>
+	window.addEventListener('load', () => {
+		const toast = document.getElementById('toast');
+		if (toast && toast.classList.contains('show')) {
+			setTimeout(() => {
+				toast.classList.remove('show');
+			}, 4000);
+		}
+	});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>Admin Dashboard — SmartBank</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css" />
+	<style>
+		:root {
+			--bg-solid: #0b0d17;
+			--card-bg: #161b2c;
+			--accent: #10b981;
+			--accent-alt: #6366f1;
+			--text-bright: #ffffff;
+			--text-dim: #94a3b8;
+			--border: #2d3748;
+		}
+
+		/* Sticky Footer Layout */
+		html, body { height: 100%; margin: 0; }
+		body {
+			font-family: 'Inter', sans-serif;
+			background: radial-gradient(circle at top right, #111827, var(--bg-solid));
+			color: var(--text-bright);
+			display: flex;
+			flex-direction: column;
+			font-size: 14px;
+		}
+
+		.admin-wrap {
+			flex: 1 0 auto;
+			max-width: 1100px;
+			width: 90%;
+			margin: 35px auto;
+		}
+
+		.topbar {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 30px;
+			border-bottom: 1px solid var(--border);
+			padding-bottom: 15px;
+		}
+
+		.brand { display: flex; gap: 12px; align-items: center; }
+		.logo {
+			width: 34px;
+			height: 34px;
+			border-radius: 7px;
+			background: linear-gradient(135deg, var(--accent-alt), var(--accent));
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 15px;
+			font-weight: 900;
+			color: #0b0d17;
+		}
+
+		.grid {
+			display: grid;
+			grid-template-columns: repeat(4, 1fr);
+			gap: 15px;
+			margin: 20px 0 35px 0;
+		}
+
+		/* Stat hover lift */
+		.stat {
+			padding: 18px;
+			border-radius: 10px;
+			text-align: left;
+			text-decoration: none;
+			background: rgba(255, 255, 255, 0.02);
+			border: 1px solid var(--border);
+			transition: all 0.2s ease-out;
+		}
+
+		.stat:hover {
+			border-color: var(--accent);
+			background: rgba(16, 185, 129, 0.06);
+			transform: translateY(-4px);
+		}
+
+		.stat h2 {
+			margin: 0;
+			font-size: 22px;
+			color: var(--accent);
+		}
+
+		.stat p {
+			margin: 4px 0 0;
+			color: var(--text-dim);
+			font-size: 11px;
+			font-weight: 700;
+			text-transform: uppercase;
+		}
+
+		/* Button hover effects */
+		.btn {
+			padding: 8px 16px;
+			border-radius: 7px;
+			font-weight: 700;
+			cursor: pointer;
+			text-decoration: none;
+			font-size: 13px;
+			display: inline-block;
+			transition: all 0.2s ease;
+			border: 1px solid var(--border);
+		}
+
+		.btn-ghost {
+			background: transparent;
+			color: var(--text-bright);
+		}
+
+		.btn-ghost:hover {
+			background: var(--border);
+			transform: translateY(-2px);
+		}
+
+		.btn-primary {
+			background: linear-gradient(135deg, var(--accent-alt), var(--accent));
+			color: #fff;
+			border: none;
+		}
+
+		.btn-primary:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+			opacity: 0.9;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin-top: 15px;
+		}
+
+		th {
+			padding: 12px;
+			text-align: left;
+			color: var(--text-dim);
+			font-size: 11px;
+			text-transform: uppercase;
+			border-bottom: 2px solid var(--border);
+		}
+
+		td {
+			padding: 12px;
+			font-size: 13px;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+		}
+
+		.small-muted { color: var(--text-dim); font-size: 13px; }
+
+		footer {
+			flex-shrink: 0;
+			padding: 20px;
+			text-align: center;
+			color: var(--text-dim);
+			font-size: 12px;
+			border-top: 1px solid var(--border);
+			background: var(--bg-solid);
+		}
+
+		@media (max-width: 800px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+	</style>
+</head>
+<body>
+
+<div class="admin-wrap">
+	<div class="topbar">
+		<div class="brand">
+			<div class="logo">SB</div>
+			<div>
+				<div style="font-weight:800; font-size:17px">SmartBank — Admin</div>
+				<div class="small-muted">Administration console</div>
+			</div>
+		</div>
+		<div class="actions">
+			<form th:action="@{/logout}" method="post" style="margin: 0;">
+				<button type="submit" class="btn btn-primary">Logout</button>
+			</form>
+		</div>
+	</div>
+
+	<div style="display:flex; justify-content:space-between; align-items:center;">
+		<h2 style="margin:0; font-size:20px; font-weight:800">Dashboard</h2>
+		<div style="display:flex; gap:8px;">
+			<a th:href="@{/admin/users}" class="btn btn-ghost">View users</a>
+			<a th:href="@{/admin/requests}" class="btn btn-ghost">Requests</a>
+		</div>
+	</div>
+
+	<div class="grid">
+		<a th:href="@{/admin/users}" class="stat">
+			<h2 th:text="${totalUsers} ?: 0">0</h2>
+			<p>Registered users</p>
+		</a>
+		<a th:href="@{/admin/requests}" class="stat">
+			<h2 th:text="${totalLoanRequests} ?: 0">0</h2>
+			<p>Loan requests</p>
+		</a>
+		<a th:href="@{/admin/requests?type=fd}" class="stat">
+			<h2 th:text="${totalFD} ?: 0">0</h2>
+			<p>Fixed deposit requests</p>
+		</a>
+		<a th:href="@{/admin/requests?type=ins}" class="stat">
+			<h2 th:text="${totalIns} ?: 0">0</h2>
+			<p>Insurance requests</p>
+		</a>
+	</div>
+
+	<h3 style="margin:0; font-size:16px; border-left: 3px solid var(--accent); padding-left: 10px;">Recent activity</h3>
+	<div class="small-muted" style="margin-bottom:8px">Latest requests & actions</div>
+
+	<table>
+		<thead>
+		<tr>
+			<th>Type</th>
+			<th>User</th>
+			<th>Info</th>
+			<th>Created</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr th:if="${recentActivity == null or #lists.isEmpty(recentActivity)}">
+			<td colspan="4" class="small-muted" style="text-align:center; padding:25px;">No recent activity</td>
+		</tr>
+		<tr th:each="item : ${recentActivity}">
+			<td th:text="${item.type}" style="color:var(--accent); font-weight:700">Type</td>
+			<td th:text="${item.userEmail}">user@example.com</td>
+			<td th:text="${item.info}">Info</td>
+			<td class="small-muted" th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm')}">Created</td>
+		</tr>
+		</tbody>
+	</table>
+</div>
+
+<footer>
+	© <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2026</span> SmartBank — Admin console
+</footer>
+
+</body>
+</html>

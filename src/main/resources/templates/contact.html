@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title th:text="${title}">Contact — SmartBank</title>
+	<style>
+		:root {
+			--bg-solid: #0b0d17;
+			--card-bg: #161b2c;
+			--accent: #10b981;
+			--accent-alt: #6366f1;
+			--text-bright: #ffffff;
+			--text-dim: #94a3b8;
+			--border: #2d3748;
+		}
+		body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg-solid); color: #fff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 14px; }
+
+		/* Success Popup Styling */
+		.success-toast {
+			position: fixed; top: 25px; background: var(--accent); color: #0b0d17;
+			padding: 12px 24px; border-radius: 50px; font-weight: 700;
+			box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+			transform: translateY(-100px); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+			z-index: 1000; display: flex; align-items: center; gap: 8px;
+		}
+		.success-toast.show { transform: translateY(0); }
+
+		.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; margin-bottom: 25px; }
+		.brand .logo {
+			width: 32px; height: 32px; border-radius: 8px;
+			background: linear-gradient(135deg, var(--accent-alt), var(--accent));
+			display: flex; align-items: center; justify-content: center;
+			font-size: 14px; font-weight: 900; color: #0b0d17;
+		}
+
+		.rect-card {
+			background: var(--card-bg); display: flex; width: 90%; max-width: 800px;
+			border-radius: 12px; overflow: hidden; border: 1px solid var(--border);
+			box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+		}
+		.info-side { flex: 1; padding: 40px; background: rgba(99, 102, 241, 0.03); border-right: 1px solid var(--border); }
+		.form-side { flex: 1.5; padding: 40px; }
+
+		h2 { color: var(--accent); margin: 0 0 10px; font-size: 22px; font-weight: 800; }
+		p { color: var(--text-dim); font-size: 13px; line-height: 1.5; }
+
+		label { font-size: 10px; text-transform: uppercase; color: var(--accent-alt); font-weight: 700; display: block; margin-bottom: 5px; letter-spacing: 0.5px; }
+		input, textarea { width: 100%; padding: 10px; margin-bottom: 15px; background: var(--bg-solid); border: 1px solid var(--border); border-radius: 6px; color: #fff; box-sizing: border-box; font-family: inherit; }
+		input:focus, textarea:focus { outline: none; border-color: var(--accent); }
+
+		.btn-send { background: linear-gradient(135deg, var(--accent-alt), var(--accent)); color: #fff; padding: 12px 24px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; width: 100%; }
+		.btn-send:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+
+		/* Professional Back Button */
+		.actions { margin-top: 30px; }
+		.btn-dashboard {
+			color: var(--text-dim); text-decoration: none; font-size: 13px; font-weight: 600;
+			border: 1px solid var(--border); padding: 10px 24px; border-radius: 50px;
+			transition: 0.3s; display: inline-block;
+		}
+		.btn-dashboard:hover { color: var(--accent); border-color: var(--accent); background: rgba(16, 185, 129, 0.05); }
+
+		footer { margin-top: 40px; font-size: 11px; color: var(--text-dim); }
+
+		@media (max-width: 650px) { .rect-card { flex-direction: column; } .info-side { border-right: none; border-bottom: 1px solid var(--border); } }
+	</style>
+</head>
+<body>
+
+<div id="toast" class="success-toast" th:classappend="${param.success} ? 'show' : ''">
+	<span>✓</span> Message sent successfully!
+</div>
+
+<div class="brand">
+	<div class="logo">SB</div>
+	Smart<span style="color:var(--accent)">Bank</span>
+</div>
+
+<div class="rect-card">
+	<div class="info-side">
+		<h2>Get in Touch</h2>
+		<p>Our concierge team is available 24/7 to assist with your wealth management queries.</p>
+		<div style="margin-top: 30px; font-size: 12px; color: var(--text-dim);">
+			<div style="margin-bottom: 10px;">📧 support@smartbank.vip</div>
+			<div>📞 +91 98765 43210</div>
+		</div>
+	</div>
+	<div class="form-side">
+		<form th:action="@{/contact/send}" method="post">
+			<label>Full Name</label>
+			<input name="name" required />
+			<label>Email Address</label>
+			<input type="email" name="email" required />
+			<label>Message</label>
+			<textarea name="message" rows="3" required></textarea>
+			<button class="btn-send" type="submit">Send Message</button>
+		</form>
+	</div>
+</div>
+
+<div class="actions">
+	<a th:href="@{/}" class="btn-dashboard">← Back to Dashboard</a>
+</div>
+
+<footer>
+	© 2026 SmartBank &middot; Secure Digital Banking
+</footer>
+
+<script>
+	// Hide toast after 4 seconds and clean URL
+	window.addEventListener('load', () => {
+		const toast = document.getElementById('toast');
+		if (toast.classList.contains('show')) {
+			setTimeout(() => {
+				toast.classList.remove('show');
+				const url = new URL(window.location);
+				url.searchParams.delete('success');
+				window.history.replaceState({}, '', url);
+			}, 4000);
+		}
+	});
+</script>
+</body>
+</html>

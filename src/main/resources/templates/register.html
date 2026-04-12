@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>Create Account — SmartBank</title>
+	<style>
+		:root {
+			--bg-solid: #0b0d17;
+			--card-bg: #161b2c;
+			--accent: #10b981;
+			--accent-alt: #6366f1;
+			--text-bright: #ffffff;
+			--text-dim: #94a3b8;
+			--border: #2d3748;
+			--success: #10b981;
+		}
+
+		html, body { min-height: 100vh; margin: 0; background: var(--bg-solid); }
+		body { font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+
+		.reg-card {
+			width: 100%; max-width: 480px; background: var(--card-bg);
+			border-radius: 16px; padding: 32px; border: 1px solid var(--border);
+			box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+			position: relative;
+		}
+
+		.btn-home {
+			display: inline-flex; align-items: center; gap: 6px;
+			color: var(--text-dim); text-decoration: none; font-size: 11px;
+			font-weight: 600; padding: 6px 12px; border: 1px solid var(--border);
+			border-radius: 6px; transition: 0.2s; margin-bottom: 20px;
+		}
+		.btn-home:hover { color: var(--accent); border-color: var(--accent); background: rgba(16, 185, 129, 0.05); }
+
+		.header { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 25px; }
+		.logo {
+			width: 36px; height: 36px; border-radius: 8px;
+			background: linear-gradient(135deg, var(--accent-alt), var(--accent));
+			display: flex; align-items: center; justify-content: center;
+			font-size: 16px; font-weight: 900; color: #0b0d17;
+		}
+
+		h1 { font-size: 22px; margin: 0; color: var(--text-bright); font-weight: 800; letter-spacing: -0.5px; }
+
+		.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+		.full { grid-column: span 2; }
+
+		.form-group { margin-bottom: 6px; text-align: left; }
+		label { display: block; font-size: 11px; color: var(--text-dim); margin-bottom: 4px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+
+		input {
+			width: 100%; padding: 10px 14px; background: var(--bg-solid); border: 1px solid var(--border);
+			border-radius: 8px; color: white; font-size: 14px; box-sizing: border-box; transition: 0.2s;
+		}
+		input:focus { border-color: var(--accent); outline: none; }
+
+		.pw-hints {
+			display: flex; justify-content: space-between;
+			padding: 6px 12px; background: rgba(0, 0, 0, 0.2);
+			border-radius: 6px; margin-top: 6px; font-size: 10px;
+		}
+		.pw-hints div { color: var(--text-dim); }
+		.pw-hints .ok { color: var(--success); font-weight: bold; }
+
+		.verify-box {
+			background: rgba(0, 0, 0, 0.2); padding: 16px; border-radius: 12px;
+			margin-top: 15px; border: 1px solid var(--border);
+		}
+		.verify-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+		.otp-row { display: flex; gap: 10px; }
+
+		.btn {
+			padding: 12px; border-radius: 8px; border: none; font-weight: 700;
+			font-size: 14px; cursor: pointer; transition: 0.2s;
+			display: inline-flex; align-items: center; justify-content: center;
+		}
+		.btn-primary { background: linear-gradient(135deg, var(--accent-alt), var(--accent)); color: #fff; width: 100%; }
+		.btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); }
+		.btn-outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 5px 12px; font-size: 11px; }
+
+		.btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+		.footer { text-align: center; margin-top: 20px; font-size: 13px; color: var(--text-dim); }
+		.footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
+	</style>
+</head>
+<body>
+<div class="reg-card">
+	<a th:href="@{/}" href="/" class="btn-home">
+		<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+		Back to Home
+	</a>
+
+	<div class="header">
+		<div class="logo">SB</div>
+		<h1>Create Account</h1>
+	</div>
+
+	<div th:if="${error}" th:text="${error}" style="background: rgba(248,113,113,0.1); color: #f87171; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 12px; text-align: center; border: 1px solid rgba(248,113,113,0.3);"></div>
+
+	<form id="registerForm" th:action="@{/register}" method="post" novalidate>
+		<div class="form-grid">
+			<div class="form-group full">
+				<label>Full Name</label>
+				<input id="fullName" name="fullName" type="text" th:value="${prefillName}" placeholder="John Doe" required />
+			</div>
+			<div class="form-group">
+				<label>Email Address</label>
+				<input id="email" name="email" type="email" th:value="${prefillEmail}" placeholder="john@example.com" required />
+			</div>
+			<div class="form-group">
+				<label>Phone Number</label>
+				<input id="phone" name="phone" type="tel" th:value="${prefillPhone}" placeholder="+91 98765 43210" required />
+			</div>
+			<div class="form-group">
+				<label>Password</label>
+				<input id="password" name="password" type="password" placeholder="••••••••" required />
+				<div class="pw-hints">
+					<div id="pwLen">8+ Chars</div>
+					<div id="pwAlpha">Letter</div>
+					<div id="pwDigit">Number</div>
+					<div id="pwSpec">Special</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label>Date of Birth</label>
+				<input id="dob" name="dob" type="text" placeholder="DD/MM/YYYY" maxlength="10" required />
+			</div>
+			<div class="form-group full">
+				<label>Aadhaar / National ID</label>
+				<input id="nationalId" name="nationalId" type="text" placeholder="[Aadhaar Redacted]" required />
+			</div>
+		</div>
+
+		<div class="verify-box">
+			<div class="verify-top">
+				<label style="margin:0;">Email Verification</label>
+				<button type="button" id="btnSendOtp" class="btn btn-outline">Send Code</button>
+			</div>
+			<div class="otp-row">
+				<input id="otpInput" placeholder="Enter code" maxlength="6" style="flex: 2;" />
+				<button type="button" id="btnVerifyOtp" class="btn btn-primary" style="flex: 1;" disabled>Verify</button>
+			</div>
+			<div id="otpStatus" style="font-size: 11px; margin-top: 6px; color: var(--accent); font-weight: 600;"></div>
+		</div>
+
+		<button id="createBtn" class="btn btn-primary" type="submit" style="margin-top: 18px;" disabled>Create Account</button>
+	</form>
+
+	<div class="footer">
+		Already have an account? <a th:href="@{/login}">Log in</a>
+	</div>
+</div>
+
+<script>
+	(function () {
+		const btnSend = document.getElementById('btnSendOtp'), btnVerify = document.getElementById('btnVerifyOtp'),
+				otpInput = document.getElementById('otpInput'), emailInput = document.getElementById('email'),
+				createBtn = document.getElementById('createBtn'), otpStatus = document.getElementById('otpStatus'),
+				passwordInput = document.getElementById('password'), dobInput = document.getElementById('dob'),
+				form = document.getElementById('registerForm');
+
+		const hints = {
+			len: document.getElementById('pwLen'), alpha: document.getElementById('pwAlpha'),
+			digit: document.getElementById('pwDigit'), spec: document.getElementById('pwSpec')
+		};
+
+		let verified = false, passwordValid = false;
+
+		dobInput.addEventListener('input', (e) => {
+			let v = e.target.value.replace(/\D/g, '');
+			if (v.length > 2 && v.length <= 4) v = v.slice(0, 2) + '/' + v.slice(2);
+			else if (v.length > 4) v = v.slice(0, 2) + '/' + v.slice(2, 4) + '/' + v.slice(4, 8);
+			e.target.value = v;
+		});
+
+		passwordInput.addEventListener('input', () => {
+			const pw = passwordInput.value || '';
+			const l = pw.length >= 8, a = /[A-Z]/i.test(pw), d = /[0-9]/.test(pw), s = /[!@#$%^&*]/.test(pw);
+			hints.len.className = l ? 'ok' : ''; hints.alpha.className = a ? 'ok' : '';
+			hints.digit.className = d ? 'ok' : ''; hints.spec.className = s ? 'ok' : '';
+			passwordValid = (l && a && d && s);
+			createBtn.disabled = !(verified && passwordValid);
+		});
+
+		btnSend.addEventListener('click', async () => {
+			const email = emailInput.value.trim();
+			if (!email) { otpStatus.textContent = 'Enter email first'; return; }
+			otpStatus.textContent = 'Sending...';
+			try {
+				const resp = await fetch('/api/public/register/send-otp', {
+					method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+					body: new URLSearchParams({email})
+				});
+				if ((await resp.text()).startsWith('OK')) {
+					otpStatus.textContent = 'Code sent — Check inbox'; btnVerify.disabled = false;
+				} else { otpStatus.textContent = 'Enter a valid Email'; }
+			} catch (e) { otpStatus.textContent = 'Network error'; }
+		});
+
+		btnVerify.addEventListener('click', async () => {
+			const email = emailInput.value.trim(), otp = otpInput.value.trim();
+			try {
+				const resp = await fetch('/api/public/register/verify-otp', {
+					method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+					body: new URLSearchParams({email, otp})
+				});
+				if ((await resp.text()) === 'OK') {
+					otpStatus.textContent = 'Email Verified ✓'; verified = true;
+					emailInput.readOnly = true; btnSend.disabled = true;
+					createBtn.disabled = !(passwordValid && verified);
+				} else { otpStatus.textContent = 'Invalid code'; }
+			} catch (e) { otpStatus.textContent = 'Verify failed'; }
+		});
+
+		form.addEventListener('submit', (e) => {
+			if (!verified || !passwordValid) e.preventDefault();
+			// The old data-no-send strip code will simply do nothing now since we removed the tags
+			form.querySelectorAll('[data-no-send]').forEach(el => el.removeAttribute('name'));
+		});
+	})();
+</script>
+</body>
+</html>

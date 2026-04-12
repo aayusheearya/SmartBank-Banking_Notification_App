@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title th:text="${title}">SmartBank — Banking & Notifications</title>
+	<style>
+		:root {
+			--bg-solid: #0b0d17;
+			--card-bg: #161b2c;
+			--accent: #10b981; /* Sea Green */
+			--accent-alt: #6366f1; /* Violet Blue */
+			--text-bright: #ffffff;
+			--text-dim: #94a3b8;
+			--border: #2d3748;
+			--maxw: 1000px;
+		}
+
+		html { scroll-behavior: smooth; }
+		body {
+			margin: 0; font-family: 'Inter', -apple-system, sans-serif;
+			background: var(--bg-solid); color: var(--text-bright);
+			line-height: 1.5; font-size: 14px;
+		}
+		.container { max-width: var(--maxw); margin: 0 auto; padding: 0 20px; }
+
+		header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; }
+		.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; }
+		.brand .logo {
+			width: 32px; height: 32px; border-radius: 8px;
+			background: linear-gradient(135deg, var(--accent-alt), var(--accent));
+			display: flex; align-items: center; justify-content: center;
+			font-size: 14px; font-weight: 900; color: #0b0d17;
+		}
+		.brand .accent { color: var(--accent); }
+
+		nav { display: flex; gap: 24px; }
+		.nav-link { color: var(--text-dim); text-decoration: none; font-size: 13px; font-weight: 500; transition: 0.2s; }
+		.nav-link:hover { color: var(--accent); }
+
+		.btn { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; transition: 0.2s; display: inline-flex; align-items: center; }
+		.btn-primary { background: linear-gradient(135deg, var(--accent-alt), var(--accent)); color: #fff; }
+		.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); }
+
+		/* Adjusted ghost button for top bar */
+		.btn-ghost { border: 1px solid var(--border); color: var(--text-bright); transition: 0.2s; }
+		.btn-ghost:hover { background: rgba(255, 255, 255, 0.05); border-color: var(--text-dim); }
+
+		.hero { padding: 60px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+		.hero h1 { font-size: 34px; line-height: 1.2; margin: 0 0 16px; font-weight: 800; background: linear-gradient(to right, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+		.hero p { color: var(--text-dim); font-size: 15px; margin-bottom: 24px; }
+
+		.section-header { text-align: center; margin-bottom: 40px; }
+		.section-header h2 { font-size: 24px; margin-bottom: 8px; color: var(--accent); }
+
+		.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+		.feature { background: var(--card-bg); padding: 24px; border-radius: 12px; border: 1px solid var(--border); transition: 0.2s; }
+		.feature:hover { border-color: var(--accent-alt); transform: translateY(-3px); }
+		.feature h3 { font-size: 16px; margin: 0 0 8px; color: var(--accent); }
+		.feature p { font-size: 13px; color: var(--text-dim); }
+
+		.cta { background: linear-gradient(135deg, #1e293b, var(--bg-solid)); padding: 40px; border-radius: 16px; text-align: center; margin-bottom: 60px; border: 1px solid var(--border); }
+		footer { padding: 30px 0; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-size: 12px; color: var(--text-dim); }
+
+		@media (max-width: 768px) {
+			.hero { grid-template-columns: 1fr; text-align: center; padding: 40px 0; }
+			nav { display: none; }
+		}
+	</style>
+</head>
+<body>
+<div class="container">
+	<header>
+		<div class="brand">
+			<div class="logo">SB</div>
+			Smart<span class="accent">Bank</span>
+		</div>
+		<nav>
+			<a href="#features" class="nav-link">Features</a>
+			<a th:href="@{/about}" class="nav-link">About</a>
+			<a th:href="@{/contact}" class="nav-link">Contact</a>
+		</nav>
+		<div class="actions" style="display: flex; gap: 10px;">
+			<a th:href="@{/register}" class="btn btn-ghost">Create account</a>
+			<a th:href="@{/login}" class="btn btn-primary">Login</a>
+		</div>
+	</header>
+
+	<section class="hero">
+		<div>
+			<h1>Stay updated with SmartBank </h1>
+			<p>Instant updates for your transactions, account activity, and fixed deposits. Always know what’s happening with your money.</p>
+			<div style="display: flex; gap: 12px;">
+				<a th:href="@{/register}" class="btn btn-primary">Create account</a>
+				<a href="#features" class="btn btn-ghost">Learn more</a>
+			</div>
+		</div>
+		<div style="display: flex; justify-content: center;">
+			<div style="width: 200px; height: 200px; background: radial-gradient(var(--accent-alt), transparent); filter: blur(60px); opacity: 0.2;"></div>
+		</div>
+	</section>
+
+	<section id="features" style="padding-bottom: 60px;">
+		<div class="section-header">
+			<h2>Features for you</h2>
+			<p style="color: var(--text-dim);">Everything you need to stay in control.</p>
+		</div>
+		<div class="grid">
+			<div class="feature">
+				<h3>📧 Welcome</h3>
+				<p>Instant confirmation as soon as you join us.</p>
+			</div>
+			<div class="feature">
+				<h3>💸 Alerts</h3>
+				<p>Real-time updates for every transaction.</p>
+			</div>
+			<div class="feature">
+				<h3>🏦 Deposits</h3>
+				<p>Reminders for maturity and creation.</p>
+			</div>
+			<div class="feature">
+				<h3>✅ Reliable</h3>
+				<p>Secure delivery you can always count on.</p>
+			</div>
+		</div>
+	</section>
+
+	<section class="cta">
+		<h2>Ready to get started?</h2>
+		<p style="color: var(--text-dim); margin-bottom: 20px;">Join thousands of users receiving secure notifications today.</p>
+		<a th:href="@{/register}" class="btn btn-primary" style="padding: 12px 30px;">Open your account</a>
+	</section>
+
+	<footer>
+		<div>© 2026 SmartBank. All rights reserved.</div>
+		<div>Secure Banking &middot; Notifications</div>
+	</footer>
+</div>
+</body>
+</html>
