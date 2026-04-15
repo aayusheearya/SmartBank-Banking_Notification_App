@@ -8,5 +8,5 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:17-jre
 COPY --from=build /target/*.jar app.jar
 # This matches your server.port=9098
-EXPOSE 9098
+EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
